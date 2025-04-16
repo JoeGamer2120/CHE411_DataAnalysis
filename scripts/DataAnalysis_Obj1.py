@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 
 
-def getdata():
+def getdata(path):
     """
     Using the CSV obtained from the UOLab server, this functions grabs the
     data needed to complete this script. Specifically, this grabs the control
@@ -11,7 +11,9 @@ def getdata():
 
     Parameters
     ----------
-    None.
+    path : str
+        The path to the CSV of interest
+        The path specified must be from where you run the file
 
     Returns
     ----------
@@ -20,7 +22,7 @@ def getdata():
     FIT : array
         The value of each flow meter in GPM
     """
-    df = pd.read_csv("AREA400-4-9-2025_Test1.csv")
+    df = pd.read_csv(path)
     data = df.to_numpy()
 
     # NOTE
@@ -35,17 +37,22 @@ def getdata():
     return FIC, FIT
 
 
-def ReNum(Q, D, nu):
+def ReNum(Q, D, Nu):
     """
-    Obtaines the Reynolds Number using the volumetric flow rate
+    Obtaines the Reynolds Number wrt FIT-400D (vortex flow meter)
+    using the volumetric flow rate as recorded by FIT-400B
+    TODO:
+        Need to determine how to determine Nu via temp
+        May be easier to assume but we have temp data
+        Also may be easier to use mew and density (dynamic Viscoity)
 
     Parameters
     ----------
     Q : array
-        Volumetric flow rate as provided by FIT-400B
+        Volumetric flow rate (GPM) as provided by FIT-400B
     D : int
-        Diameter of Vortex Flow meter
-    nu : int
+        Diameter of Vortex Flow meter (inches)
+    Nu : int
         Kinematic Viscoity of water at given temp
 
     Returns
@@ -54,8 +61,33 @@ def ReNum(Q, D, nu):
         Reynold's number with respect to FIT-400C
 
     """
-    return Q * D / nu
+    # For now I will assume that the temp is 22 C for simplicity, check later
+
+    Q = Q * (1 / 60) * 0.0037854118  # GPM to m^3/s
+    D *= 0.0254  # in to m
+
+    return Q * D / Nu
+
+
+def Residual(FIT):
+    """
+    Determines the residual of the a specified flow meter
+    against the standard flow meter (FIT-400B)
+
+    Parameters
+    ----------
+    FIT : array
+        The volumetric flow rates of each of the flow meters
+
+    Returns
+    ----------
+    Resid : array
+        An array of the residual for each flow meter
+        FIT-400B should all be 0
+    """
+
+    return
 
 
 if __name__ == "__main__":
-    FIC, FIT = getdata()
+    FIC, FIT = getdata("../data/AREA400-4-9-2025_Test1.csv")
