@@ -19,9 +19,9 @@ def getdata(path):
     Returns
     ----------
     FIC : array
-        The values of the control valve % open
+        The values of the control valve % open returned as a row vector
     FIT : array
-        The value of each flow meter in GPM
+        The value of each flow meter in GPM returned as a row vector
     """
     df = pd.read_csv(path)
     data = df.to_numpy()
@@ -32,8 +32,8 @@ def getdata(path):
     # Columns 6 & 7 are valve opening position for FIC-400C (in order BLOCK1 PID1)
 
     # FIC grabs from PID1
-    FIC = data[:, [3, 7]]  # In order: B, C
-    FIT = data[:, [11, 12, 13, 14]]  # In order: A, B, C, D
+    FIC = np.transpose(data[:, [3, 7]])  # In order: B, C
+    FIT = np.transpose(data[:, [11, 12, 13, 14]])  # In order: A, B, C, D
 
     return FIC, FIT
 
@@ -64,7 +64,6 @@ def ReNum(Q, D, Nu):
 
     """
     # For now I will assume that the temp is 22 C for simplicity, check later
-
     Q = Q * (1 / 60) * 0.0037854118  # GPM to m^3/s
     D *= 0.0254  # in to m
 
@@ -89,20 +88,32 @@ def Residual(FIT):
     """
     Res = np.zeros_like(FIT)
 
-    for i in range(len(Res[0])):
-        for j in range(len(Res)):
-            Res[j, i] = FIT[j, i] - FIT[j, 1]
+    # for i in range(len(Res[0])):
+    #     for j in range(len(Res)):
+    #         Res[j, i] = FIT[j, i] - FIT[j, 1]
 
     return Res
 
 
-def ResPlot():
-    fig, ax = plt.subplot()
+def ResPlot(FIT, Q, D, Nu):
+    """
+    Plots the residual of each flow meter against the Reynolds number
+    wrt the vortex meter
+    """
+    Re = ReNum(Q, D, Nu)
+    Resid = Residual(FIT)
+
+    fig, ax = plt.subplots()
+
+    # ax.scatter(Re, Resid[0], label="Residual of FIT-400A", color="red")
+    # ax.scatter(Re, Resid[2], label="Residual of FIT-400C", color="blue")
+    # ax.scatter(Re, Resid[3], label="Residual of FIT-400D", color="green")
+
+    plt.show()
 
     return
 
 
 if __name__ == "__main__":
     FIC, FIT = getdata("../data/AREA400-4-9-2025_Test1.csv")
-    Res = Residual(FIT)
-    # print(Res[:, [1]])
+    print(FIC)
