@@ -1,6 +1,7 @@
 ### Imported Libraries
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 def getdata(path):
@@ -41,6 +42,7 @@ def ReNum(Q, D, Nu):
     """
     Obtaines the Reynolds Number wrt FIT-400D (vortex flow meter)
     using the volumetric flow rate as recorded by FIT-400B
+
     TODO:
         Need to determine how to determine Nu via temp
         May be easier to assume but we have temp data
@@ -85,9 +87,22 @@ def Residual(FIT):
         An array of the residual for each flow meter
         FIT-400B should all be 0
     """
+    Res = np.zeros_like(FIT)
+
+    for i in range(len(Res[0])):
+        for j in range(len(Res)):
+            Res[j, i] = FIT[j, i] - FIT[j, 1]
+
+    return Res
+
+
+def ResPlot():
+    fig, ax = plt.subplot()
 
     return
 
 
 if __name__ == "__main__":
     FIC, FIT = getdata("../data/AREA400-4-9-2025_Test1.csv")
+    Res = Residual(FIT)
+    # print(Res[:, [1]])
