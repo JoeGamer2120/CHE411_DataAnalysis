@@ -39,8 +39,8 @@ def getdata(path):
     # Columns 2 & 3 are valve opening position for FIC-400B (note decrepsencies in data) (in order BLOCK1 PID1)
     # Columns 6 & 7 are valve opening position for FIC-400C (in order BLOCK1 PID1)
 
-    # FIC grabs from PID1
-    FIC = np.transpose(data[:, [3, 7]])  # In order: B, C
+    # FIC grabs from BLOCK1
+    FIC = np.transpose(data[:, [2, 6]])  # In order: B, C
     FIT = np.transpose(data[:, [11, 12, 13, 14]])  # In order: A, B, C, D
 
     return FIC, FIT
@@ -63,8 +63,10 @@ def ReNum(Q, D, rho, mew):
         Volumetric flow rate (GPM) as provided by FIT-400B
     D : int
         Diameter of Vortex Flow meter (inches)
-    Nu : int
-        Kinematic Viscoity of water at given temp
+    rho : 
+        Density of water (kg/m^3)
+    mew :
+        Dynamic Viscocity of Water (Pa*s)
 
     Returns
     ----------
