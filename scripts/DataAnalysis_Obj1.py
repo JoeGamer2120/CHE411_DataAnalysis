@@ -148,8 +148,8 @@ def Flow_v_B(FIT):
     fig, bplot = plt.subplots()
 
     bplot.scatter(FIT[1], FIT[0], label="FIT-400A", color="red")
-    bplot.scatter(FIT[1], FIT[1], label="FIT-400A", color="blue")
-    bplot.scatter(FIT[1], FIT[2], label="FIT-400A", color="green")
+    bplot.scatter(FIT[1], FIT[2], label="FIT-400C", color="blue")
+    bplot.scatter(FIT[1], FIT[3], label="FIT-400D", color="green")
 
     bplot.set_xlabel("Flowrate of FIT-400B (GPM)")
     bplot.set_ylabel("Flowrate (GPM)")
