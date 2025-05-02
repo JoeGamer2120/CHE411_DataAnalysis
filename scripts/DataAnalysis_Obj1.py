@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 
 def main():
-    FIC, FIT = getdata("../data/AREA400-4-9-2025_Test1.csv")
+    FIC, FIT = getdata("../data/AREA400-2025-04-30_FIC-400C_Obj1_Rep1.csv")
     ResPlot(FIT, 1.049, 997.77, 0.00095440)
     Flow_v_Pos(FIC, FIT)
     Flow_v_B(FIT)
@@ -48,7 +48,7 @@ def getdata(path):
 
 def ReNum(Q, D, rho, mew):
     """
-    Obtaines the Reynolds Number wrt FIT-400D (vortex flow meter)
+    Obtains the Reynolds Number wrt FIT-400D (vortex flow meter)
     using the volumetric flow rate as recorded by FIT-400B. The equation
     usesed is 4 * rho * Q / (pi * D * mew)
 
