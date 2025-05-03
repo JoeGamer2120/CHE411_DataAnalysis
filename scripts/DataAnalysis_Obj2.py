@@ -2,6 +2,13 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
+if __name__ == "__main__":
+    main()
+    plt.show()
+
+def main():
+
+
 def getdata(path):
     """
     Uses the CSV from the Rose Hulman Unit Operations historian and pull
@@ -9,7 +16,7 @@ def getdata(path):
     originally in column vector form so this functions transposes those to be
     row vectors for ease of use. Do not use the outputs as they would be
     displayed in excel
-    
+
     Parameters
     ----------
     path : str
@@ -32,7 +39,20 @@ def getdata(path):
     # FIC grabs from BLOCK1
     FIC = np.transpose(data[:, [2, 6]])  # In order: B, C
     FIT = np.transpose(data[:, [12]])
-    
+
     return FIC, FIT
 
 
+def flow_percent(FIT):
+    max = np.max(FIT)
+
+    p_flow = (max - FIT) / max
+    return p_flow
+
+
+def makeplot(FIC, FIT):
+    """
+    Using the data from the passed in csv, plot a chart of the of the flow percent
+    against the stem opening for each valve
+    """
+    fig, ax1 = plt.subplots()

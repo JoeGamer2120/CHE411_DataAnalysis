@@ -63,7 +63,7 @@ def ReNum(Q, D, rho, mew):
         Volumetric flow rate (GPM) as provided by FIT-400B
     D : int
         Diameter of Vortex Flow meter (inches)
-    rho : 
+    rho :
         Density of water (kg/m^3)
     mew :
         Dynamic Viscocity of Water (Pa*s)
