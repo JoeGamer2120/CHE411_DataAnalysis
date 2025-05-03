@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 
 def main():
-    FIC, FIT = getdata("../data/AREA400-2025-04-30_FIC-400B_Obj2_Rep1.csv")
+    FIC, FIT = getdata("../data/AREA400-2025-04-30_FIC-400C_Obj1_Rep1.csv")
     # vec = flow_percent(FIT)
     # print(vec)
     makeplot(FIC, FIT)
@@ -57,15 +57,21 @@ def makeplot(FIC, FIT):
     against the stem opening for each valve
     """
     p_flow = flow_percent(FIT)
+    FICB = FIC[0]
+    FICC = FIC[1]
     fig, ax1 = plt.subplots()
 
-    print(FIC[0])
-    print()
-    print(p_flow)
+    if (len(set(FICB)) == 1) is False:
+        ax1.scatter(FICB, p_flow)
+        print("FICB")
+    elif (len(set(FICC)) == 1) is False:
+        ax1.scatter(FICC, p_flow)
+        print("FICC")
 
-    ax1.scatter(FIC[0], p_flow)
     ax1.set_xlabel("Stem Opening (%)")
     ax1.set_ylabel("Flow %")
+    ax1.set_xlim(-5, 110)
+    ax1.set_ylim(-5, 110)
 
 
 if __name__ == "__main__":
