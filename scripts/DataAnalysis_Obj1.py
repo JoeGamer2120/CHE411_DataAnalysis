@@ -135,7 +135,6 @@ def ResPlot(FIT, D, rho, mew):
 def Flow_v_Pos(FIC, FIT):
     fig, oplot = plt.subplots()
 
-
     oplot.scatter(FIC[1], FIT[2], label="FIT-400C", color="blue")
     oplot.scatter(FIC[1], FIT[3], label="FIT-400D", color="green")
     oplot.scatter(FIC[1], FIT[0], label="FIT-400A", color="red")

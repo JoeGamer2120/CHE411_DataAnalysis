@@ -2,11 +2,12 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-if __name__ == "__main__":
-    main()
-    plt.show()
 
 def main():
+    FIC, FIT = getdata("../data/AREA400-2025-04-30_FIC-400B_Obj2_Rep2.csv")
+    # vec = flow_percent(FIT)
+    # print(vec)
+    makeplot(FIC, FIT)
 
 
 def getdata(path):
@@ -46,7 +47,7 @@ def getdata(path):
 def flow_percent(FIT):
     max = np.max(FIT)
 
-    p_flow = (max - FIT) / max
+    p_flow = (FIT / max) * 100
     return p_flow
 
 
@@ -55,4 +56,18 @@ def makeplot(FIC, FIT):
     Using the data from the passed in csv, plot a chart of the of the flow percent
     against the stem opening for each valve
     """
+    p_flow = flow_percent(FIT)
     fig, ax1 = plt.subplots()
+
+    print(FIC[0])
+    print()
+    print(p_flow)
+
+    ax1.scatter(FIC[0], p_flow)
+    ax1.set_xlabel("Stem Opening (%)")
+    ax1.set_ylabel("Flow %")
+
+
+if __name__ == "__main__":
+    main()
+    plt.show()
