@@ -1,4 +1,6 @@
 # CHE411_DataAnalysis
 
 # Todo
-- Start objective two script
+- Complete objective two script
+- Residual vs FIT-400B (Objective 1)
+- Grab a correct viscocity

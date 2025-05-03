@@ -122,6 +122,7 @@ def ResPlot(FIT, D, rho, mew):
     ax.scatter(Re, Resid[0], label="Residual of FIT-400A", color="red")
     ax.scatter(Re, Resid[2], label="Residual of FIT-400C", color="blue")
     ax.scatter(Re, Resid[3], label="Residual of FIT-400D", color="green")
+    ax.plot(Re, np.zeros(len(Re)))
     ax.set_xlabel("Reynold's Number wrt to Vortex meter")
     ax.set_ylabel("Residual (GPM)")
     # ax.set_xlim(0, max(Re) + 100)
@@ -134,10 +135,11 @@ def ResPlot(FIT, D, rho, mew):
 def Flow_v_Pos(FIC, FIT):
     fig, oplot = plt.subplots()
 
-    oplot.scatter(FIC[1], FIT[0], label="FIT-400A", color="red")
-    oplot.scatter(FIC[1], FIT[1], label="FIT-400B", color="yellow")
+
     oplot.scatter(FIC[1], FIT[2], label="FIT-400C", color="blue")
     oplot.scatter(FIC[1], FIT[3], label="FIT-400D", color="green")
+    oplot.scatter(FIC[1], FIT[0], label="FIT-400A", color="red")
+    oplot.scatter(FIC[1], FIT[1], label="FIT-400B", color="yellow")
     oplot.set_xlabel("Valve Positioning")
     oplot.set_ylabel("Flowrate (GPM);")
     oplot.legend()
