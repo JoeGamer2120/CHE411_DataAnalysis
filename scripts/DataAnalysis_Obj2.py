@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 
 def main():
-    FIC, FIT = getdata("../data/AREA400-2025-04-30_FIC-400B_Obj2_Rep2.csv")
+    FIC, FIT = getdata("../data/AREA400-2025-04-30_FIC-400B_Obj2_Rep1.csv")
     # vec = flow_percent(FIT)
     # print(vec)
     makeplot(FIC, FIT)
