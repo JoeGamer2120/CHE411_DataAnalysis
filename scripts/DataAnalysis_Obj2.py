@@ -10,7 +10,7 @@ def main():
     # vec = flow_percent(FIT)
     # print(vec)
     makeplot(FIC, FIT)
-    # avg = avg_flowrates(FIC, FIT)
+    avg = avg_flowrates(FIC, FIT)
     # flow_percent(avg)
 
 
@@ -85,9 +85,12 @@ def avg_flowrates(FIC, FIT):
         valve_opening, return_inverse=True
     )
     avg_flow = np.zeros_like(unique_openings, dtype=float)
+    std = np.zeros_like(unique_openings, dtype=float)
 
     for i in range(len(unique_openings)):
         avg_flow[i] = np.mean(flow_rates[inverse_indicies == i])
+        std[i] = np.std(flow_rates[inverse_indicies == i])
+    print(std)
 
     return np.vstack((unique_openings, avg_flow))
 
