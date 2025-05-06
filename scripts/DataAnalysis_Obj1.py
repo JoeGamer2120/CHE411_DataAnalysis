@@ -231,8 +231,8 @@ def Flow_v_Pos(FIC, FIT):
 def Flow_v_B(FIT):
     fig, bplot = plt.subplots()
 
-    # bplot.scatter(FIT[1], FIT[0], label="FIT-400A", color="red")
-    bplot.scatter(FIT[1], FIT[2], label="FIT-400C", color="blue")
+    bplot.scatter(FIT[1], FIT[0], label="FIT-400A", color="red")
+    # bplot.scatter(FIT[1], FIT[2], label="FIT-400C", color="blue")
     # bplot.scatter(FIT[1], FIT[3], label="FIT-400D", color="green")
 
     bplot.axline((0, 0), slope=1, color="black")
