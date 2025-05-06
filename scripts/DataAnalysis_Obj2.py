@@ -67,8 +67,10 @@ def avg_flow(FIC, FIT):
     data_sort = np.take_along_axis(data, index, axis=0)
     data = data_sort.transpose()
 
-    for i in range(len(data[0])):
-        check = data[0, i]
+    # for i in range(len(data[0])):
+    #     check = data[0, i]
+    #     if data[0, i] == check:
+    #
 
     # for i in range(len(data[:,0])):
 
