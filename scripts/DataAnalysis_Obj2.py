@@ -4,10 +4,11 @@ import matplotlib.pyplot as plt
 
 
 def main():
-    FIC, FIT = getdata("../data/AREA400-2025-04-30_FIC-400C_Obj1_Rep3.csv")
+    FIC, FIT = getdata("../data/AREA400-2025-04-30_FIC-400C_Obj1_AllRep.csv")
     # vec = flow_percent(FIT)
     # print(vec)
     makeplot(FIC, FIT)
+    # avg_flow(FIC, FIT)
 
 
 def getdata(path):
@@ -49,6 +50,31 @@ def flow_percent(FIT):
 
     p_flow = (FIT / max) * 100
     return p_flow
+
+
+def avg_flow(FIC, FIT):
+
+    FIT = FIT.reshape(-1, 1)
+    FIT = FIT[:, 0]
+
+    if (len(set(FIC[0])) == 1) is False:
+        FIC = FIC[0]
+    else:
+        FIC = FIC[1]
+
+    data = np.column_stack((FIC, FIT))
+    index = np.argsort(data, axis=0)
+    data_sort = np.take_along_axis(data, index, axis=0)
+    data = data_sort.transpose()
+
+    # for i in range(len(data[0])):
+    #     check = data[0, i]
+    #     if data[0, i] == check:
+    #
+
+    # for i in range(len(data[:,0])):
+
+    return
 
 
 def makeplot(FIC, FIT):
