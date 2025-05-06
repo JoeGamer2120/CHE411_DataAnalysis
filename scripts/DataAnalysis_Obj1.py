@@ -1,14 +1,18 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn import linear_model
+
+plt.style.use("ggplot")
 
 
 def main():
-    FIC, FIT, T = getdata("../data/AREA400-2025-04-30_FIC-400C_Obj1_Rep1.csv")
+    FIC, FIT, T = getdata("../data/AREA400-2025-04-30_FIC-400C_Obj1_AllRep.csv")
     water = waterdata()
-    ResPlot(FIT, 1.049, T, water)
+    # ResPlot(FIT, 1.049, T, water)
     # Flow_v_Pos(FIC, FIT)
-    # Flow_v_B(FIT)
+    Flow_v_B(FIT)
+    LinearRegression(FIT)
     return
 
 
@@ -198,12 +202,13 @@ def ResPlot(FIT, D, T, water):
     ax.scatter(Re, Resid[0], label="Residual of FIT-400A", color="red")
     ax.scatter(Re, Resid[2], label="Residual of FIT-400C", color="blue")
     ax.scatter(Re, Resid[3], label="Residual of FIT-400D", color="green")
-    ax.plot(Re, np.zeros(len(Re)))
+    ax.axline((0, 0), slope=0, color="black")
     ax.set_xlabel("Reynold's Number wrt to Vortex meter")
     ax.set_ylabel("Residual (GPM)")
     # ax.set_xlim(0, max(Re) + 100)
     # ax.set_ylim(min(Resid), max(Resid))
     ax.legend()
+    ax.set_title("Resdiual of Flowmeter against FIT-400B")
 
     return
 
@@ -216,7 +221,7 @@ def Flow_v_Pos(FIC, FIT):
     oplot.scatter(FIC[1], FIT[0], label="FIT-400A", color="red")
     oplot.scatter(FIC[1], FIT[1], label="FIT-400B", color="yellow")
     oplot.set_xlabel("Valve Positioning")
-    oplot.set_ylabel("Flowrate (GPM);")
+    oplot.set_ylabel("Flowrate (GPM)")
     oplot.legend()
     oplot.set_xlim(0, 105)
 
@@ -226,13 +231,37 @@ def Flow_v_Pos(FIC, FIT):
 def Flow_v_B(FIT):
     fig, bplot = plt.subplots()
 
-    bplot.scatter(FIT[1], FIT[0], label="FIT-400A", color="red")
+    # bplot.scatter(FIT[1], FIT[0], label="FIT-400A", color="red")
     bplot.scatter(FIT[1], FIT[2], label="FIT-400C", color="blue")
-    bplot.scatter(FIT[1], FIT[3], label="FIT-400D", color="green")
+    # bplot.scatter(FIT[1], FIT[3], label="FIT-400D", color="green")
+
+    bplot.axline((0, 0), slope=1, color="black")
 
     bplot.set_xlabel("Flowrate of FIT-400B (GPM)")
     bplot.set_ylabel("Flowrate (GPM)")
+    bplot.set_xlim(0, 10)
+    bplot.set_ylim(0, 10)
+    bplot.set_title("Measured Flowrate of Flow Meter vs. Flowrate of FIC-400B")
     bplot.legend()
+
+    return
+
+
+def LinearRegression(FIT):
+
+    # Reshape required for Library to function correctly
+    # Seperation made it a bit easier and should be fairly simple to change
+    FITA = FIT[0].reshape(-1, 1)
+    FITB = FIT[1].reshape(-1, 1)
+    FITC = FIT[2].reshape(-1, 1)
+    FITD = FIT[3].reshape(-1, 1)
+    # Initalize Regression Model
+    regression_model = linear_model.LinearRegression()
+
+    regression_model.fit(X=FITB, y=FITC)
+
+    print(regression_model.intercept_)
+    print(regression_model.coef_)
 
     return
 
