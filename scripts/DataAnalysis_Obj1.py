@@ -9,7 +9,7 @@ plt.style.use("ggplot")
 def main():
     FIC, FIT, T = getdata("../data/AREA400-2025-04-30_FIC-400C_Obj1_AllRep.csv")
     water = waterdata()
-    # ResPlot(FIT, 1.049, T, water)
+    ResPlot(FIT, 1.049, T, water)
     # Flow_v_Pos(FIC, FIT)
     Flow_v_B(FIT)
     LinearRegression(FIT)
@@ -199,16 +199,17 @@ def ResPlot(FIT, D, T, water):
 
     fig, ax = plt.subplots()
 
-    ax.scatter(Re, Resid[0], label="Residual of FIT-400A", color="red")
-    ax.scatter(Re, Resid[2], label="Residual of FIT-400C", color="blue")
+    # ax.scatter(Re, Resid[0], label="Residual of FIT-400A", color="red")
+    # ax.scatter(Re, Resid[2], label="Residual of FIT-400C", color="blue")
     ax.scatter(Re, Resid[3], label="Residual of FIT-400D", color="green")
     ax.axline((0, 0), slope=0, color="black")
     ax.set_xlabel("Reynold's Number wrt to Vortex meter")
     ax.set_ylabel("Residual (GPM)")
     # ax.set_xlim(0, max(Re) + 100)
     # ax.set_ylim(min(Resid), max(Resid))
-    ax.legend()
-    ax.set_title("Resdiual of Flowmeter against FIT-400B")
+    ax.legend(loc=1)
+    # ax.set_title("Resdiual of Flowmeter against FIT-400B")
+    fig.savefig("ResidualPlt_FIT-400D.png")
 
     return
 
@@ -231,9 +232,9 @@ def Flow_v_Pos(FIC, FIT):
 def Flow_v_B(FIT):
     fig, bplot = plt.subplots()
 
-    bplot.scatter(FIT[1], FIT[0], label="FIT-400A", color="red")
+    # bplot.scatter(FIT[1], FIT[0], label="FIT-400A", color="red")
     # bplot.scatter(FIT[1], FIT[2], label="FIT-400C", color="blue")
-    # bplot.scatter(FIT[1], FIT[3], label="FIT-400D", color="green")
+    bplot.scatter(FIT[1], FIT[3], label="FIT-400D", color="green")
 
     bplot.axline((0, 0), slope=1, color="black")
 
@@ -241,8 +242,9 @@ def Flow_v_B(FIT):
     bplot.set_ylabel("Flowrate (GPM)")
     bplot.set_xlim(0, 10)
     bplot.set_ylim(0, 10)
-    bplot.set_title("Measured Flowrate of Flow Meter vs. Flowrate of FIC-400B")
+    # bplot.set_title("Measured Flowrate of Flow Meter vs. Flowrate of FIC-400B")
     bplot.legend()
+    fig.savefig("Flow_v_B_Plt_FIT-400D.png")
 
     return
 

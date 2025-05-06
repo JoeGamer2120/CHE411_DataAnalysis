@@ -6,11 +6,9 @@ plt.style.use("ggplot")
 
 
 def main():
-    FIC, FIT = getdata("../data/AREA400-2025-04-30_FIC-400C_Obj1_AllRep.csv")
-    # vec = flow_percent(FIT)
-    # print(vec)
-    makeplot(FIC, FIT)
-    avg = avg_flowrates(FIC, FIT)
+    FIC, FIT = getdata("../data/AREA400-2025-04-30_FIC-400B_Obj2_Closing.csv")
+    makeplot(FIC, FIT, "FIC-400B_Closing.png")
+    # avg = avg_flowrates(FIC, FIT)
     # flow_percent(avg)
 
 
@@ -48,18 +46,10 @@ def getdata(path):
     return FIC, FIT
 
 
-# def flow_percent(FIT):
-#     max = np.max(FIT)
-#
-#     p_flow = (FIT / max) * 100
-#     return p_flow
+def flow_percent(flow_rates):
+    max = np.max(flow_rates)
 
-
-def flow_percent(avg_flow):
-    max = np.max(avg_flow[1])
-
-    p_flow = (avg_flow[1] / max) * 100
-    print(p_flow)
+    p_flow = (flow_rates / max) * 100
     return p_flow
 
 
@@ -80,6 +70,7 @@ def avg_flowrates(FIC, FIT):
 
     valve_opening = data[0]
     flow_rates = data[1]
+    p_flow = flow_percent(flow_rates)
 
     unique_openings, inverse_indicies = np.unique(
         valve_opening, return_inverse=True
@@ -88,27 +79,27 @@ def avg_flowrates(FIC, FIT):
     std = np.zeros_like(unique_openings, dtype=float)
 
     for i in range(len(unique_openings)):
-        avg_flow[i] = np.mean(flow_rates[inverse_indicies == i])
-        std[i] = np.std(flow_rates[inverse_indicies == i])
-    print(std)
+        avg_flow[i] = np.mean(p_flow[inverse_indicies == i])
+        std[i] = np.std(p_flow[inverse_indicies == i])
 
-    return np.vstack((unique_openings, avg_flow))
+    return np.vstack((unique_openings, avg_flow)), std
 
 
-def makeplot(FIC, FIT):
+def makeplot(FIC, FIT, filename):
     """
     Using the data from the passed in csv, plot a chart of the of the flow percent
     against the stem opening for each valve
     """
     fig, ax1 = plt.subplots()
-    avg_flow = avg_flowrates(FIC, FIT)
-    p_flow = flow_percent(avg_flow)
+    avg_flow, std = avg_flowrates(FIC, FIT)
 
-    ax1.scatter(avg_flow[0], p_flow)
+    # ax1.scatter(avg_flow[0], p_flow)
+    ax1.errorbar(avg_flow[0], avg_flow[1], yerr=std, fmt="s")
     ax1.set_xlabel("Stem Opening (%)")
     ax1.set_ylabel("Flow %")
     ax1.set_xlim(-5, 110)
     ax1.set_ylim(-5, 110)
+    fig.savefig(filename)
 
 
 if __name__ == "__main__":
