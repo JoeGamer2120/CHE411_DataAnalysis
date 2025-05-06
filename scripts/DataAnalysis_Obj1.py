@@ -1,14 +1,14 @@
-### Imported Libraries
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
 
 def main():
-    FIC, FIT = getdata("../data/AREA400-2025-04-30_FIC-400C_Obj1_Rep1.csv")
-    ResPlot(FIT, 1.049, 997.77, 0.00095440)
-    Flow_v_Pos(FIC, FIT)
-    Flow_v_B(FIT)
+    FIC, FIT, T = getdata("../data/AREA400-2025-04-30_FIC-400C_Obj1_Rep1.csv")
+    water = waterdata()
+    ResPlot(FIT, 1.049, T, water)
+    # Flow_v_Pos(FIC, FIT)
+    # Flow_v_B(FIT)
     return
 
 
@@ -42,8 +42,17 @@ def getdata(path):
     # FIC grabs from BLOCK1
     FIC = np.transpose(data[:, [2, 6]])  # In order: B, C
     FIT = np.transpose(data[:, [11, 12, 13, 14]])  # In order: A, B, C, D
+    T = np.transpose(data[:, [35]])  # Temp data from TE-400A
 
-    return FIC, FIT
+    return FIC, FIT, T
+
+
+def waterdata():
+    df = pd.read_csv("../data/water.txt", sep="\t", header=0)
+    data = df.to_numpy()
+
+    water = np.transpose(data[:, [0, 2, 11]])
+    return water
 
 
 def ReNum(Q, D, rho, mew):
@@ -84,6 +93,74 @@ def ReNum(Q, D, rho, mew):
     return np.abs(4 * rho * Q / (np.pi * D * mew))
 
 
+def ReNum2(Q, D, T, water):
+    """
+    Obtains the Reynolds Number wrt FIT-400D (vortex flow meter)
+    using the volumetric flow rate as recorded by FIT-400B. The equation
+    used is 4 * rho * Q / (pi * D * mew).
+    ReNum2 differs from ReNum because it uses density and viscosity
+    data from the NIST Webbook data. The data was pulled assuming
+    incompressible fluid assumption and that the pressure is 1 atm
+
+    Parameters
+    ----------
+    Q : array
+        Volumetric flow rate (GPM) as provided by FIT-400B
+    D : int
+        Diameter of Vortex Flow meter (inches)
+    T : array
+        Temperature readings pulled from TE-400A
+    water : array
+        Liquid water property data including temp, density and viscosity in SI units
+        Pulled from NIST Webbook
+
+    Returns
+    ----------
+    Re : array
+        Reynold's number with respect to FIT-400C
+    """
+
+    Re = np.zeros((1, len(Q)))
+    Q = Q * (1 / 60) * 0.0037854118  # GPM to m^3/s
+    D *= 0.0254  # in to m
+
+    for i in range(len(T[0])):
+        index = find_closest(water[0], T[0, i])
+        Re[0, i] = np.abs(
+            4 * water[1, index] * Q[i] / (np.pi * D * water[2, index])
+        )
+
+    return Re
+
+
+def find_closest(temp, target):
+    """
+    Find the closest temperature value to the temperature reading
+    from TE-400A without overshooting. The change in density and
+    viscosity is so small that the fraction of a degree it's off
+    is negigable.
+
+    Parameters
+    ----------
+    temp : array
+        List of temperatures from NIST Webbook pulled in smallest increments
+        on the NIST Webbook
+    target : flt
+        Temp value as read by TE-400A
+    """
+    close = temp[0]
+    min_diff = np.abs(target - close)
+
+    for i in range(len(temp)):
+        diff = np.abs(target - temp[i])
+        if temp[i] > target:
+            return i - 1
+        elif diff < min_diff:
+            min_diff = diff
+            close = temp[i]
+    return
+
+
 def Residual(FIT):
     """
     Determines the residual of the a specified flow meter
@@ -108,13 +185,12 @@ def Residual(FIT):
     return Res
 
 
-def ResPlot(FIT, D, rho, mew):
+def ResPlot(FIT, D, T, water):
     """
     Plots the residual of each flow meter against the Reynolds number
     wrt the vortex meter
     """
-    Re = ReNum(FIT[1], D, rho, mew)
-    # Re = ReNum(FIT[1], 1.049, 997.77, 0.00095440)
+    Re = ReNum2(FIT[1], D, T, water)
     Resid = Residual(FIT)
 
     fig, ax = plt.subplots()
