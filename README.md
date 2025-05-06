@@ -12,3 +12,13 @@ AREA400-2025-04-30_FIC-400B_Obj2_Rep1.csv
 - Grab a correct viscocity
 - Error analysis
 
+# Data Analysis
+
+## Objective 1 
+- Determine range based on residual and linear plots
+- Regress lienar model paramters
+
+## Objective 2 
+- Take average of each valve reading, to create characteristic curves
+- Find error in average and plot error bars
+
