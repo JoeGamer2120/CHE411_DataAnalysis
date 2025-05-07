@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import linear_model
+import statsmodels.api as sm
 
 plt.style.use("ggplot")
 
@@ -9,9 +10,9 @@ plt.style.use("ggplot")
 def main():
     FIC, FIT, T = getdata("../data/AREA400-2025-04-30_FIC-400C_Obj1_AllRep.csv")
     water = waterdata()
-    ResPlot(FIT, 1.049, T, water)
+    # ResPlot(FIT, 1.049, T, water)
     # Flow_v_Pos(FIC, FIT)
-    Flow_v_B(FIT)
+    # Flow_v_B(FIT)
     LinearRegression(FIT)
     return
 
@@ -257,13 +258,26 @@ def LinearRegression(FIT):
     FITB = FIT[1].reshape(-1, 1)
     FITC = FIT[2].reshape(-1, 1)
     FITD = FIT[3].reshape(-1, 1)
+
+    # Fit Model
+    Y = np.array(
+        FITC[:, 0], dtype=float
+    )  # Change depending on which model you want to regress
+
+    X = np.array(FITB[:, 0], dtype=float)  # DO NOT CHANGE
+    X2 = sm.add_constant(X)  # DO NOT CHANGE
+
+    model = sm.OLS(Y, X2)
+    results = model.fit()
+    print(results.summary())
+
     # Initalize Regression Model
-    regression_model = linear_model.LinearRegression()
+    FlowB = linear_model.LinearRegression()
 
-    regression_model.fit(X=FITB, y=FITC)
-
-    print(regression_model.intercept_)
-    print(regression_model.coef_)
+    FlowB.fit(X=FITB, y=FITC)
+    #
+    print(FlowB.intercept_)
+    print(FlowB.coef_)
 
     return
 
