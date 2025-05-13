@@ -10,10 +10,11 @@ plt.style.use("ggplot")
 def main():
     FIC, FIT, T = getdata("../data/AREA400-2025-04-30_FIC-400C_Obj1_AllRep.csv")
     water = waterdata()
-    # ResPlot(FIT, 1.049, T, water)
+    FIC, FIT, T = sample_flowmeter_data(FIC, FIT, T, 500)
+    ResPlot(FIT, 1.049, T, water)
     # Flow_v_Pos(FIC, FIT)
-    # Flow_v_B(FIT)
-    LinearRegression(FIT)
+    Flow_v_B(FIT)
+    # LinearRegression(FIT)
     return
 
 
@@ -58,6 +59,23 @@ def waterdata():
 
     water = np.transpose(data[:, [0, 2, 11]])
     return water
+
+def sample_flowmeter_data(FIC, FIT, T, num_samples):
+    
+    FIC = FIC.transpose()
+    FIT = FIT.transpose()
+    T = T.transpose()
+    
+    idx = np.random.choice(len(FIT), size=num_samples, replace=False)
+    FIC_sam = FIC[idx,:]
+    FIT_sam = FIT[idx,:]
+    T_sam = T[idx,:]
+    
+    FIC = FIC_sam.transpose()
+    FIT = FIT_sam.transpose()
+    T = T_sam.transpose()
+    
+    return FIC, FIT, T
 
 
 def ReNum(Q, D, rho, mew):
@@ -188,7 +206,7 @@ def Residual(FIT):
             Res[i, j] = FIT[i, j] - FIT[1, j]
 
     return Res
-
+    
 
 def ResPlot(FIT, D, T, water):
     """
@@ -211,7 +229,7 @@ def ResPlot(FIT, D, T, water):
     # ax.set_ylim(min(Resid), max(Resid))
     ax.legend(loc=4)
     # ax.set_title("Resdiual of Flowmeter against FIT-400B")
-    fig.savefig("ResidualPlt_FIT-400D_FitAxes.png")
+    # fig.savefig("ResidualPlt_FIT-400D_FitAxes.png")
 
     return
 
@@ -246,7 +264,7 @@ def Flow_v_B(FIT):
     bplot.set_ylim(0, 10)
     # bplot.set_title("Measured Flowrate of Flow Meter vs. Flowrate of FIC-400B")
     bplot.legend()
-    fig.savefig("Flow_v_B_Plt_FIT-400D_AxesTitles.png")
+    # fig.savefig("Flow_v_B_Plt_FIT-400D_AxesTitles.png")
 
     return
 
