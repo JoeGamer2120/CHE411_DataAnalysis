@@ -5,6 +5,7 @@ from sklearn import linear_model
 import statsmodels.api as sm
 
 plt.style.use("ggplot")
+np.random.seed(7)
 
 
 def main():
@@ -60,21 +61,22 @@ def waterdata():
     water = np.transpose(data[:, [0, 2, 11]])
     return water
 
+
 def sample_flowmeter_data(FIC, FIT, T, num_samples):
-    
+
     FIC = FIC.transpose()
     FIT = FIT.transpose()
     T = T.transpose()
-    
+
     idx = np.random.choice(len(FIT), size=num_samples, replace=False)
-    FIC_sam = FIC[idx,:]
-    FIT_sam = FIT[idx,:]
-    T_sam = T[idx,:]
-    
+    FIC_sam = FIC[idx, :]
+    FIT_sam = FIT[idx, :]
+    T_sam = T[idx, :]
+
     FIC = FIC_sam.transpose()
     FIT = FIT_sam.transpose()
     T = T_sam.transpose()
-    
+
     return FIC, FIT, T
 
 
@@ -209,17 +211,16 @@ def Residual(FIT):
 
 
 def error_prob_res(FITB, FIT_let, delta_let):
-    
+
     deltaB = 0.0025
     err = np.zeros_like(FITB)
-    
+
     for i in range(len(err)):
         err_B = FITB[i] * deltaB
         err_let = FIT_let[i] * delta_let
-        err[i] = np.sqrt(err_B**2 + err_let**2)  
+        err[i] = np.sqrt(err_B**2 + err_let**2)
     return err
-    
-    
+
 
 def ResPlot(FIT, D, T, water):
     """
@@ -227,49 +228,52 @@ def ResPlot(FIT, D, T, water):
     wrt the vortex meter
     """
     Re = ReNum2(FIT[1], D, T, water)
-    Resid = Residual(FIT) 
+    Resid = Residual(FIT)
 
     fig, ax = plt.subplots()
 
     # ax.scatter(Re, Resid[0], label="Residual of FIT-400A", color="red")
     # ax.scatter(Re, Resid[2], label="Residual of FIT-400C", color="blue")
-    # ax.scatter(Re, Resid[3], label="Residual of FIT-400D", color="green")
-    
+    ax.scatter(Re, Resid[3], label="Residual of FIT-400D", color="green")
+
     ax.axline((0, 0), slope=0, color="black")
-    # ax.errorbar(Re.transpose(), 
+    # ax.errorbar(Re.transpose(),
     #             Resid[0].transpose(),
     #             capsize=4,
     #             yerr=error_prob_res(FIT[1], FIT[0], 0.0025).transpose(),
     #             fmt='o',
     #             color='red',
     #             label='FIT-400A')
-    
-    ax.errorbar(Re.transpose(), 
-                Resid[2].transpose(),
-                capsize=4,
-                yerr=error_prob_res(FIT[1], FIT[2], 0.0125).transpose(),
-                fmt='o',
-                color='blue',
-                label='FIT-400C')
-    
-    # ax.errorbar(Re.transpose(), 
+
+    # ax.errorbar(
+    #     Re.transpose(),
+    #     Resid[2].transpose(),
+    #     capsize=4,
+    #     yerr=error_prob_res(FIT[1], FIT[2], 0.0125).transpose(),
+    #     fmt="o",
+    #     color="blue",
+    #     label="FIT-400C",
+    # )
+
+    # ax.errorbar(Re.transpose(),
     #             Resid[3].transpose(),
     #             capsize=4,
     #             yerr=error_prob_res(FIT[1], FIT[3], 0.0075).transpose(),
     #             fmt='o',
     #             color='green',
     #             label='FIT-400D')
-    
-    
+
     ax.set_ylim(-1.5, 1)
-    ax.set_xlabel("Reynold's Number wrt to FIT-400C")
-    ax.set_ylabel("Residual (GPM)")
+    ax.set_xlabel("Reynold's Number wrt to FIT-400C", fontsize=17)
+    ax.set_ylabel("Residual (GPM)", fontsize=17)
+    plt.xticks(fontsize=10)
+    plt.yticks(fontsize=10)
     # ax.set_xlim(0, max(Re) + 100)
     # ax.set_ylim(min(Resid), max(Resid))
     ax.legend(loc=4)
     # ax.set_title("Resdiual of Flowmeter against FIT-400B")
-    
-    # fig.savefig("ResidualPlt_FIT-400D_FitAxes.png")
+
+    fig.savefig("ResidualPlt_FIT-400D_Final.png")
 
     return
 
@@ -291,47 +295,50 @@ def Flow_v_Pos(FIC, FIT):
 
 def Flow_v_B(FIT):
     fig, bplot = plt.subplots()
-    # FITA = FIT[0]
-    # FITB = FIT[1]
-    # FITC = FIT[2]
-    # FITD = FIT[3]
-    
-    x_err_B = FIT[1] * 0.0025
-    y_err_A = FIT[0] * 0.0025
-    y_err_C = FIT[2] * 0.0125
-    y_err_D = FIT[3] * 0.0075
+
+    # x_err_B = FIT[1] * 0.0025
+    # y_err_A = FIT[0] * 0.0025
+    # y_err_C = FIT[2] * 0.0125
+    # y_err_D = FIT[3] * 0.0075
+
+    # err = np.array([0.0025, 0.0025, 0.0125, 0.0075])
 
     # bplot.scatter(FIT[1], FIT[0], label="FIT-400A", color="red")
     # bplot.scatter(FIT[1], FIT[2], label="FIT-400C", color="blue")
-    # bplot.scatter(FIT[1], FIT[3], label="FIT-400D", color="green")
-    
-    # bplot.errorbar(FIT[1], 
-    #                 FIT[0], 
-    #                 capsize=4, 
-    #                 xerr=x_err_B, 
-    #                 yerr=y_err_A, 
-    #                 fmt='o', 
-    #                 color='red', 
-    #                 label='FIT-400A')
-    
-    bplot.errorbar(FIT[1], 
-                    FIT[2], 
-                    capsize=4, 
-                    xerr=x_err_B, 
-                    yerr=y_err_C, 
-                    fmt='o', 
-                    color='blue', 
-                    label='FIT-400C')
+    bplot.scatter(FIT[1], FIT[3], label="FIT-400D", color="green")
 
     bplot.axline((0, 0), slope=1, color="black")
+    # bplot.axline((0, 0), slope=1 + err[3], color="black")
+    # bplot.axline((0, 0), slope=1 - err[3], color="black")
 
-    bplot.set_xlabel("Flowrate of FIT-400B (GPM)")
-    bplot.set_ylabel("Flowrate of FIT-400D (GPM)")
+    # bplot.errorbar(FIT[1],
+    #                 FIT[0],
+    #                 capsize=4,
+    #                 xerr=x_err_B,
+    #                 yerr=y_err_A,
+    #                 fmt='o',
+    #                 color='red',
+    #                 label='FIT-400A')
+
+    # bplot.errorbar(FIT[1],
+    #                 FIT[2],
+    #                 capsize=4,
+    #                 xerr=x_err_B,
+    #                 yerr=y_err_C,
+    #                 fmt='o',
+    #                 color='blue',
+    #                 label='FIT-400C')
+    #
+
+    bplot.set_xlabel("Flowrate of FIT-400B (GPM)", fontsize=17)
+    bplot.set_ylabel("Flowrate of FIT-400D (GPM)", fontsize=17)
     bplot.set_xlim(0, 10)
     bplot.set_ylim(0, 10)
+    plt.xticks(fontsize=10)
+    plt.yticks(fontsize=10)
     # bplot.set_title("Measured Flowrate of Flow Meter vs. Flowrate of FIC-400B")
     bplot.legend()
-    # fig.savefig("Flow_v_B_Plt_FIT-400D_AxesTitles.png")
+    fig.savefig("Flow_v_B_Plt_FIT-400D_Final.png")
 
     return
 

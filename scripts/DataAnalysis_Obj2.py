@@ -7,17 +7,17 @@ plt.style.use("ggplot")
 
 def main():
     FIC_Close, FIT_Close = getdata(
-        "../data/AREA400-2025-04-30_FIC-400B_Obj2_Closing.csv"
+        "../data/AREA400-2025-04-30_FIC-400C_Obj2_Closing.csv"
     )
     FIC_Open, FIT_Open = getdata(
-        "../data/AREA400-2025-04-30_FIC-400B_Obj2_Opening.csv"
+        "../data/AREA400-2025-04-30_FIC-400C_Obj2_Opening.csv"
     )
     makeplot(
         FIC_Open,
         FIT_Open,
         FIC_Close,
         FIT_Close,
-        "FIC-400B_CharacteristicCurve.png",
+        "FIC-400C_CharacteristicCurve.png",
     )
 
 
@@ -122,10 +122,12 @@ def makeplot(FIC_Open, FIT_Open, FIC_Close, FIT_Close, filename):
         color="green",
         label="Closing",
     )
-    ax1.set_xlabel("Stem Opening (%)")
-    ax1.set_ylabel("Flow %")
+    ax1.set_xlabel("Stem Opening (%)", fontsize=17)
+    ax1.set_ylabel("Flow %", fontsize=17)
     ax1.set_xlim(-5, 110)
     ax1.set_ylim(-5, 110)
+    plt.xticks(fontsize=10)
+    plt.yticks(fontsize=10)
     ax1.legend(loc=2)
     fig.savefig(filename)
 
