@@ -10,7 +10,7 @@ plt.style.use("ggplot")
 def main():
     FIC, FIT, T = getdata("../data/AREA400-2025-04-30_FIC-400C_Obj1_AllRep.csv")
     water = waterdata()
-    FIC, FIT, T = sample_flowmeter_data(FIC, FIT, T, 500)
+    FIC, FIT, T = sample_flowmeter_data(FIC, FIT, T, 250)
     ResPlot(FIT, 1.049, T, water)
     # Flow_v_Pos(FIC, FIT)
     Flow_v_B(FIT)
@@ -206,6 +206,19 @@ def Residual(FIT):
             Res[i, j] = FIT[i, j] - FIT[1, j]
 
     return Res
+
+
+def error_prob_res(FITB, FIT_let, delta_let):
+    
+    deltaB = 0.0025
+    err = np.zeros_like(FITB)
+    
+    for i in range(len(err)):
+        err_B = FITB[i] * deltaB
+        err_let = FIT_let[i] * delta_let
+        err[i] = np.sqrt(err_B**2 + err_let**2)  
+    return err
+    
     
 
 def ResPlot(FIT, D, T, water):
@@ -214,21 +227,48 @@ def ResPlot(FIT, D, T, water):
     wrt the vortex meter
     """
     Re = ReNum2(FIT[1], D, T, water)
-    Resid = Residual(FIT)
+    Resid = Residual(FIT) 
 
     fig, ax = plt.subplots()
 
     # ax.scatter(Re, Resid[0], label="Residual of FIT-400A", color="red")
     # ax.scatter(Re, Resid[2], label="Residual of FIT-400C", color="blue")
-    ax.scatter(Re, Resid[3], label="Residual of FIT-400D", color="green")
+    # ax.scatter(Re, Resid[3], label="Residual of FIT-400D", color="green")
+    
     ax.axline((0, 0), slope=0, color="black")
+    # ax.errorbar(Re.transpose(), 
+    #             Resid[0].transpose(),
+    #             capsize=4,
+    #             yerr=error_prob_res(FIT[1], FIT[0], 0.0025).transpose(),
+    #             fmt='o',
+    #             color='red',
+    #             label='FIT-400A')
+    
+    ax.errorbar(Re.transpose(), 
+                Resid[2].transpose(),
+                capsize=4,
+                yerr=error_prob_res(FIT[1], FIT[2], 0.0125).transpose(),
+                fmt='o',
+                color='blue',
+                label='FIT-400C')
+    
+    # ax.errorbar(Re.transpose(), 
+    #             Resid[3].transpose(),
+    #             capsize=4,
+    #             yerr=error_prob_res(FIT[1], FIT[3], 0.0075).transpose(),
+    #             fmt='o',
+    #             color='green',
+    #             label='FIT-400D')
+    
+    
     ax.set_ylim(-1.5, 1)
-    ax.set_xlabel("Reynold's Number wrt to Vortex meter")
+    ax.set_xlabel("Reynold's Number wrt to FIT-400C")
     ax.set_ylabel("Residual (GPM)")
     # ax.set_xlim(0, max(Re) + 100)
     # ax.set_ylim(min(Resid), max(Resid))
     ax.legend(loc=4)
     # ax.set_title("Resdiual of Flowmeter against FIT-400B")
+    
     # fig.savefig("ResidualPlt_FIT-400D_FitAxes.png")
 
     return
@@ -251,10 +291,37 @@ def Flow_v_Pos(FIC, FIT):
 
 def Flow_v_B(FIT):
     fig, bplot = plt.subplots()
+    # FITA = FIT[0]
+    # FITB = FIT[1]
+    # FITC = FIT[2]
+    # FITD = FIT[3]
+    
+    x_err_B = FIT[1] * 0.0025
+    y_err_A = FIT[0] * 0.0025
+    y_err_C = FIT[2] * 0.0125
+    y_err_D = FIT[3] * 0.0075
 
     # bplot.scatter(FIT[1], FIT[0], label="FIT-400A", color="red")
     # bplot.scatter(FIT[1], FIT[2], label="FIT-400C", color="blue")
-    bplot.scatter(FIT[1], FIT[3], label="FIT-400D", color="green")
+    # bplot.scatter(FIT[1], FIT[3], label="FIT-400D", color="green")
+    
+    # bplot.errorbar(FIT[1], 
+    #                 FIT[0], 
+    #                 capsize=4, 
+    #                 xerr=x_err_B, 
+    #                 yerr=y_err_A, 
+    #                 fmt='o', 
+    #                 color='red', 
+    #                 label='FIT-400A')
+    
+    bplot.errorbar(FIT[1], 
+                    FIT[2], 
+                    capsize=4, 
+                    xerr=x_err_B, 
+                    yerr=y_err_C, 
+                    fmt='o', 
+                    color='blue', 
+                    label='FIT-400C')
 
     bplot.axline((0, 0), slope=1, color="black")
 
