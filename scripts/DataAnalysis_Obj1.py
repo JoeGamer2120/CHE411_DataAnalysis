@@ -204,13 +204,14 @@ def ResPlot(FIT, D, T, water):
     # ax.scatter(Re, Resid[2], label="Residual of FIT-400C", color="blue")
     ax.scatter(Re, Resid[3], label="Residual of FIT-400D", color="green")
     ax.axline((0, 0), slope=0, color="black")
+    ax.set_ylim(-1.5, 1)
     ax.set_xlabel("Reynold's Number wrt to Vortex meter")
     ax.set_ylabel("Residual (GPM)")
     # ax.set_xlim(0, max(Re) + 100)
     # ax.set_ylim(min(Resid), max(Resid))
-    ax.legend(loc=1)
+    ax.legend(loc=4)
     # ax.set_title("Resdiual of Flowmeter against FIT-400B")
-    fig.savefig("ResidualPlt_FIT-400D.png")
+    fig.savefig("ResidualPlt_FIT-400D_FitAxes.png")
 
     return
 
@@ -240,12 +241,12 @@ def Flow_v_B(FIT):
     bplot.axline((0, 0), slope=1, color="black")
 
     bplot.set_xlabel("Flowrate of FIT-400B (GPM)")
-    bplot.set_ylabel("Flowrate (GPM)")
+    bplot.set_ylabel("Flowrate of FIT-400D (GPM)")
     bplot.set_xlim(0, 10)
     bplot.set_ylim(0, 10)
     # bplot.set_title("Measured Flowrate of Flow Meter vs. Flowrate of FIC-400B")
     bplot.legend()
-    fig.savefig("Flow_v_B_Plt_FIT-400D.png")
+    fig.savefig("Flow_v_B_Plt_FIT-400D_AxesTitles.png")
 
     return
 

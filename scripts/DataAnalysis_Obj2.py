@@ -6,10 +6,19 @@ plt.style.use("ggplot")
 
 
 def main():
-    FIC, FIT = getdata("../data/AREA400-2025-04-30_FIC-400B_Obj2_Closing.csv")
-    makeplot(FIC, FIT, "FIC-400B_Closing.png")
-    # avg = avg_flowrates(FIC, FIT)
-    # flow_percent(avg)
+    FIC_Close, FIT_Close = getdata(
+        "../data/AREA400-2025-04-30_FIC-400B_Obj2_Closing.csv"
+    )
+    FIC_Open, FIT_Open = getdata(
+        "../data/AREA400-2025-04-30_FIC-400B_Obj2_Opening.csv"
+    )
+    makeplot(
+        FIC_Open,
+        FIT_Open,
+        FIC_Close,
+        FIT_Close,
+        "FIC-400B_CharacteristicCurve.png",
+    )
 
 
 def getdata(path):
@@ -85,20 +94,39 @@ def avg_flowrates(FIC, FIT):
     return np.vstack((unique_openings, avg_flow)), std
 
 
-def makeplot(FIC, FIT, filename):
+def makeplot(FIC_Open, FIT_Open, FIC_Close, FIT_Close, filename):
     """
     Using the data from the passed in csv, plot a chart of the of the flow percent
     against the stem opening for each valve
     """
     fig, ax1 = plt.subplots()
-    avg_flow, std = avg_flowrates(FIC, FIT)
+    avg_flow_open, std_open = avg_flowrates(FIC_Open, FIT_Open)
+    avg_flow_close, std_close = avg_flowrates(FIC_Close, FIT_Close)
 
     # ax1.scatter(avg_flow[0], p_flow)
-    ax1.errorbar(avg_flow[0], avg_flow[1], yerr=std, fmt="s")
+    ax1.errorbar(
+        avg_flow_open[0],
+        avg_flow_open[1],
+        capsize=4,
+        yerr=std_open,
+        fmt="o",
+        color="red",
+        label="Opening",
+    )
+    ax1.errorbar(
+        avg_flow_close[0],
+        avg_flow_close[1],
+        capsize=4,
+        yerr=std_close,
+        fmt="s",
+        color="green",
+        label="Closing",
+    )
     ax1.set_xlabel("Stem Opening (%)")
     ax1.set_ylabel("Flow %")
     ax1.set_xlim(-5, 110)
     ax1.set_ylim(-5, 110)
+    ax1.legend(loc=2)
     fig.savefig(filename)
 
 
